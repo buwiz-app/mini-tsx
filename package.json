@@ -1,0 +1,24 @@
+{
+  "name": "hello-mini-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hello, the mini-tsx template's mini app (app.buwiz.hello): the MCP server the Buwiz Bot spawns",
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "mcp": "bun src/main.ts mcp",
+    "build": "bun build --compile --minify src/main.ts --outfile dist/hello-mini-app",
+    "check": "oxlint && oxfmt --check && tsc --noEmit",
+    "fmt": "oxfmt",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@buwiz/sdk": "github:buwiz-app/buwiz-sdk#e33cbbee0b246b51e36b33a8db06a9d7a18a6eae"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.43.0",
+    "typescript": "^5.9.0"
+  }
+}
