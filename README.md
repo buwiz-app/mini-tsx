@@ -20,7 +20,7 @@ tool, `hello_resolve`), and one screen (`apps/home.tsx`).
 | `src/`            | The mini app: `manifest.ts`, `tools.ts`, `apps.ts` (the screens, embedded), the `Plugin` in `plugin.ts` |
 | `apps/`           | The screens, one `.tsx` file each                                                                       |
 | `tests/`          | Tests                                                                                                   |
-| `tools/`          | `new.sh`, `check-all.sh`, `bot/conformance.sh`, `release/prepare.sh`                                    |
+| `tools/`          | `new.sh`, `check-all.sh`, `no-detached-setters.sh`, `bot/conformance.sh`, `release/prepare.sh`          |
 | `docs/guide.md`   | The walkthrough: tools, commands and scopes, screens, routines, tests, release                          |
 | `.claude/skills/` | Skills for coding agents: add a tool, a command or scope, a screen; release                             |
 
