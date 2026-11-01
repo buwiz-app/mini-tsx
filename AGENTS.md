@@ -24,10 +24,14 @@ Skills, by task: `add-tool`, `add-command` (commands and scopes), `add-screen`, 
    Tests sign with a throwaway test key id (`hello-test-01`); only the owner signs a release with the release key,
    from the Keychain. Agents never touch the Keychain.
 7. **One protocol version.** No shims for older protocol names or versions.
+8. **No detached setters.** A screen passes a signal setter wrapped: `onChange={(v) => x.set(v)}`, never
+   `onChange={x.set}`; the kit calls `p.onChange(v)`, so a detached `set` loses `this`.
+   `tools/no-detached-setters.sh` checks `apps/`.
 
 ## Gates
 
-`tools/check-all.sh` passes before every commit: `bun run check` (oxlint, oxfmt, tsc), `bun test`, and
-`tools/bot/conformance.sh`, which needs a buwiz-bot checkout in `BUWIZ_BOT_DIR` (`docs/guide.md` section 7).
+`tools/check-all.sh` passes before every commit: `bun run check` (oxlint, oxfmt, tsc),
+`tools/no-detached-setters.sh`, `bun test`, and `tools/bot/conformance.sh`, which needs a buwiz-bot checkout in
+`BUWIZ_BOT_DIR` (`docs/guide.md` section 7).
 `SKIP_BOT=1` skips conformance and fails the run, so a skip never reads as a pass. Use `bun`, not npm or npx; the
 toolchain is Oxc (oxlint, oxfmt) and tsc.

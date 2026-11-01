@@ -25,16 +25,16 @@ installs and tests. The rest of this guide calls the app Hello.
 
 ## 2. What is where
 
-| Path              | What                                                                              |
-| ----------------- | --------------------------------------------------------------------------------- |
-| `src/manifest.ts` | The manifest, built in code; its version is `package.json`'s                      |
-| `src/tools.ts`    | The tools: `list()` (what the model sees) and `call()` (what runs)                |
-| `src/apps.ts`     | The TSX sources, imported as text so the binary embeds them                       |
-| `src/plugin.ts`   | `Hello`: the state (tickets, your store) and the `Plugin` that ties it together   |
-| `src/main.ts`     | One line: the SDK's command line                                                  |
-| `apps/`           | The screens, one `.tsx` file each                                                 |
-| `tests/`          | Tests, through the SDK's harness                                                  |
-| `tools/`          | `check-all.sh` (every gate), `bot/conformance.sh`, `release/prepare.sh`, `new.sh` |
+| Path              | What                                                                                                        |
+| ----------------- | ----------------------------------------------------------------------------------------------------------- |
+| `src/manifest.ts` | The manifest, built in code; its version is `package.json`'s                                                |
+| `src/tools.ts`    | The tools: `list()` (what the model sees) and `call()` (what runs)                                          |
+| `src/apps.ts`     | The TSX sources, imported as text so the binary embeds them                                                 |
+| `src/plugin.ts`   | `Hello`: the state (tickets, your store) and the `Plugin` that ties it together                             |
+| `src/main.ts`     | One line: the SDK's command line                                                                            |
+| `apps/`           | The screens, one `.tsx` file each                                                                           |
+| `tests/`          | Tests, through the SDK's harness                                                                            |
+| `tools/`          | `check-all.sh` (every gate), `no-detached-setters.sh`, `bot/conformance.sh`, `release/prepare.sh`, `new.sh` |
 
 The binary's command line comes from the SDK:
 
@@ -123,7 +123,7 @@ only if the routine lists it in `writes`, and the user approves those writes at 
 
 ```sh
 bun test                       # your tests
-tools/check-all.sh             # every gate: oxlint, oxfmt, tsc, tests, conformance
+tools/check-all.sh             # every gate: oxlint, oxfmt, tsc, detached setters, tests, conformance
 ```
 
 `Harness` from `@buwiz/sdk/plugin` is a provisioned server: call your tools the way the Bot does.
