@@ -10,6 +10,11 @@ if [ "$#" -eq 0 ]; then
   set -- apps
 fi
 
+# BSD grep with --include skips a missing path silently, so check first
+for p in "$@"; do
+  [ -e "$p" ] || { printf 'no-detached-setters: %s not found\n' "$p" >&2; exit 2; }
+done
+
 set +e
 OUTPUT="$(grep -rnE --include='*.tsx' -e "$PATTERN" -- "$@" 2>&1)"
 RC=$?

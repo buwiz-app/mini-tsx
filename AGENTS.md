@@ -1,9 +1,10 @@
 # AGENTS.md
 
-A Buwiz Bot mini app in TypeScript (protocol 2.0), made from the `buwiz-app/mini-tsx` template. The SDK
-(`@buwiz/sdk`, from `buwiz-app/buwiz-sdk`, pinned by commit in `package.json`) does the protocol; this repo holds
-the manifest (`src/manifest.ts`), the tools (`src/tools.ts`) and the screens (`apps/`, embedded by
-`src/apps.ts`). Bun runs it and `bun build --compile` releases it. `docs/guide.md` is the reference for every part.
+A Buwiz Bot mini app in TypeScript (Buwiz Mini App Protocol 1.0), made from the `buwiz-app/mini-tsx` template. The
+SDK (`@buwiz/sdk`, from `buwiz-app/buwiz-sdk`, pinned by commit in `package.json`) does the protocol; this repo
+holds the manifest (`src/manifest.ts`), the tools (`src/tools.ts`), the screens (`apps/`, embedded by
+`src/apps.ts`) and the package template (`package/plugin.json`). Bun runs it, `bun build --compile` builds it, and
+`tools/release/publish.sh` releases it as a package. `docs/guide.md` is the reference for every part.
 
 Skills, by task: `add-tool`, `add-command` (commands and scopes), `add-screen`, `release`.
 
@@ -20,10 +21,13 @@ Skills, by task: `add-tool`, `add-command` (commands and scopes), `add-screen`, 
    issue (P1); a ticket's title never reveals its subject.
 5. **Text without secrets.** No subject data and never a key in a message, title or log (P4, P9). Side effects sit
    behind explicit arguments, so a call with `{}` changes nothing (P5).
-6. **One version, one signature.** Any change to the manifest or a screen raises `version` in `package.json`.
+6. **One version, one signature.** Any change to the manifest or a screen raises `version` in `package.json`, and
+   `package/plugin.json`'s `version` and `buwiz.version` with it (`tests/manifest.test.ts` checks they agree).
    Tests sign with a throwaway test key id (`hello-test-01`); only the owner signs a release with the release key,
-   from the Keychain. Agents never touch the Keychain.
-7. **One protocol version.** No shims for older protocol names or versions.
+   from the Keychain. Agents never touch the Keychain: `tools/release/publish.sh` runs for them only with
+   `--key-file` and a throwaway key, and never with `--publish`.
+7. **One protocol version: 1.0.** No shims for older protocol names or versions (2.0 and 2.1 were the pre-release
+   numbering of 1.0; a 1.0 Bot refuses them).
 8. **No detached setters.** A screen passes a signal setter wrapped: `onChange={(v) => x.set(v)}`, never
    `onChange={x.set}`; the kit calls `p.onChange(v)`, so a detached `set` loses `this`.
    `tools/no-detached-setters.sh` checks `apps/`.
