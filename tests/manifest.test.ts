@@ -2,7 +2,7 @@
 // conformance runner (tools/bot/conformance.sh); this is the quick one.
 
 import { expect, test } from "bun:test";
-import { fingerprint, problems } from "@buwiz/sdk/plugin";
+import { PROTOCOL, fingerprint, problems } from "@buwiz/sdk/plugin";
 import pkg from "../package.json";
 import { APPS } from "../src/apps";
 import { Hello } from "../src/plugin";
@@ -29,4 +29,18 @@ test("every TSX app is served, and fingerprinted as served", () => {
     expect(source, app.id).toBe(APPS[app.id as keyof typeof APPS]);
     expect(app.fingerprint).toBe(fingerprint(source as string));
   }
+});
+
+test("package/plugin.json is this build's: protocol, id, short, version and publisher", async () => {
+  const p = await Bun.file(new URL("../package/plugin.json", import.meta.url)).json();
+  const m = plugin.manifest(plugin.releaseKeyId);
+  expect(p.version).toBe(m.version);
+  expect(p.buwiz).toMatchObject({
+    protocol: PROTOCOL,
+    id: m.id,
+    short: m.short,
+    version: m.version,
+    publisher: { id: m.publisher.id, key_id: m.publisher.key_id },
+  });
+  expect(Object.keys(p.mcpServers)).toContain(p.buwiz.server);
 });

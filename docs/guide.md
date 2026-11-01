@@ -3,12 +3,15 @@
 A mini app is a plugin for the Buwiz Bot: a small binary the Bot spawns, speaking MCP on stdin and stdout. It
 brings **tools** (the model, screens and routines call them), **commands** (`/hello`) and **scopes**
 (`@hello:friend:Ada`), **routines** (timed agent runs) and **screens** (full screen, or inline cards in the chat).
-A signed **manifest** declares all of it, and the Bot trusts nothing the manifest does not declare.
+A signed **manifest** declares all of it, and the Bot trusts nothing the manifest does not declare. The rules are
+[Buwiz Mini App Protocol 1.0](https://github.com/buwiz-app/buwiz-sdk/blob/main/docs/protocol-1.0.md); a 1.0 Bot
+runs 1.0 plugins only.
 
 You write what is yours: the manifest, the tools, the screens. The SDK
 ([buwiz-app/buwiz-sdk](https://github.com/buwiz-app/buwiz-sdk), `@buwiz/sdk/plugin`) does the protocol: MCP, the
-reserved `buwiz.*` tools, session certificates, tickets, and the caller checks. The release is one compiled binary
-(`bun build --compile`), so users need no runtime.
+reserved `buwiz.*` tools, session certificates, tickets, pushed account tokens, and the caller checks. The release
+is a package: one compiled binary (`bun build --compile`, so users need no runtime), its signed manifest and a
+signed `plugin.json`.
 
 ## 1. Make it yours
 
@@ -25,16 +28,17 @@ installs and tests. The rest of this guide calls the app Hello.
 
 ## 2. What is where
 
-| Path              | What                                                                                                        |
-| ----------------- | ----------------------------------------------------------------------------------------------------------- |
-| `src/manifest.ts` | The manifest, built in code; its version is `package.json`'s                                                |
-| `src/tools.ts`    | The tools: `list()` (what the model sees) and `call()` (what runs)                                          |
-| `src/apps.ts`     | The TSX sources, imported as text so the binary embeds them                                                 |
-| `src/plugin.ts`   | `Hello`: the state (tickets, your store) and the `Plugin` that ties it together                             |
-| `src/main.ts`     | One line: the SDK's command line                                                                            |
-| `apps/`           | The screens, one `.tsx` file each                                                                           |
-| `tests/`          | Tests, through the SDK's harness                                                                            |
-| `tools/`          | `check-all.sh` (every gate), `no-detached-setters.sh`, `bot/conformance.sh`, `release/prepare.sh`, `new.sh` |
+| Path              | What                                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ |
+| `src/manifest.ts` | The manifest, built in code; its version is `package.json`'s                                                 |
+| `package/`        | `plugin.json`, the package template: the Bot's spawn line, accounts (section 9) and the signed `buwiz` block |
+| `src/tools.ts`    | The tools: `list()` (what the model sees) and `call()` (what runs)                                           |
+| `src/apps.ts`     | The TSX sources, imported as text so the binary embeds them                                                  |
+| `src/plugin.ts`   | `Hello`: the state (tickets, your store) and the `Plugin` that ties it together                              |
+| `src/main.ts`     | One line: the SDK's command line                                                                             |
+| `apps/`           | The screens, one `.tsx` file each                                                                            |
+| `tests/`          | Tests, through the SDK's harness                                                                             |
+| `tools/`          | `check-all.sh` (every gate), `no-detached-setters.sh`, `bot/conformance.sh`, `release/publish.sh`, `new.sh`  |
 
 The binary's command line comes from the SDK:
 
@@ -43,6 +47,8 @@ bun run mcp                                   what the Bot runs, from source
 dist/hello-mini-app mcp                       the same, compiled (bun run build)
 dist/hello-mini-app manifest [--key-id <id>]  the unsigned manifest, for signing
 dist/hello-mini-app app-source <id>           a screen's source, exactly as served
+dist/hello-mini-app package <plugin.json> <out> <os>-<arch> [--published <plugin.json>]
+                                              fill a release's plugin.json, to sign (section 10)
 ```
 
 ## 3. Add a tool
@@ -96,7 +102,8 @@ export default function Home() {
   `buwiz.storage`. Its data comes from your tools through `buwiz.call`.
 - Its default export is the component the Bot mounts. It reads `buwiz.props` and sizes itself from
   `buwiz.viewport()`; an inline card reports its height with `buwiz.fit(height)` and may use `buwiz.actions`,
-  `buwiz.meta` and `buwiz.settle` for the Bot's own card chrome.
+  `buwiz.meta` and `buwiz.settle` for the Bot's own card chrome. A card with `inline.wait_ready: true` keeps its
+  placeholder until it calls `buwiz.ready()` (or 3 seconds pass).
 - Every color has a `dark:` variant: the Bot renders in its own light or dark theme.
 - A method whose permission the manifest does not grant is absent, hence `buwiz.call?.(…)`.
 
@@ -158,6 +165,8 @@ Before your tool runs, the SDK has made sure that:
 - a resolve and a routine's query only read;
 - a routine's turn only reads, or calls a write the routine declares.
 
+It also answers `buwiz.account.set` and `buwiz.account.clear`, and keeps the tokens they push in memory (section 9).
+
 Yours:
 
 - **Tickets, not identifiers.** Outside your process a subject is a ticket (`tkt_…`): in tool results, props,
@@ -170,13 +179,57 @@ Yours:
 The full rules: the Bot's [security checklist](https://github.com/buwiz-bot/buwiz-bot/blob/main/server/sdk/mini-app/docs/security.md)
 and [manifest reference](https://github.com/buwiz-bot/buwiz-bot/blob/main/server/sdk/mini-app/docs/manifest.md).
 
-## 9. Release
+## 9. Accounts
 
-1. Raise `version` in `package.json`: any change to the manifest or a screen needs a new version and a new
-   signature.
+A mini app that calls a service as the person (Google, or any OAuth issuer) declares the account in
+`package/plugin.json`'s `buwiz.accounts`. The Bot signs the person in and pushes the access token to the plugin;
+the plugin never asks, and the token never reaches the model, a screen or a log (protocol 1.0 section 20).
+
+```json
+"accounts": [{ "id": "google", "provider": "google", "label": "Google account", "scopes": ["https://www.googleapis.com/auth/drive.file"] }]
+```
+
+A tool reads the token from its caller. Pass `caller` through from `Hello.call` (the `Plugin`'s third argument),
+and answer `accountRequired` when there is none, so the Bot asks the person to sign in:
+
+```ts
+import { type Caller, type Result, accountRequired } from "@buwiz/sdk/plugin";
+
+async function files(caller: Caller): Promise<Result> {
+  const google = caller.account("google"); // the default sign-in, else any live one
+  if (!google) return accountRequired("google");
+  const r = await fetch("https://www.googleapis.com/drive/v3/files", { headers: { Authorization: google.authorization() } });
+  …
+}
+```
+
+Never log a token or put it in an answer. In tests, push one with
+`h.call("buwiz.account.set", { account: "google", label: "default", access_token: "test" }, null)`.
+
+## 10. Release
+
+A 1.0 release is a **package** on GitHub releases (protocol 1.0 sections 7 and 8): `plugin.json` with a signed
+`buwiz` block, the signed manifest (`<plugin id>.manifest.json`, installed at `bin/` beside the binary, where the
+binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, installed at `bin/hello-mini-app`).
+
+1. Raise `version` in `package.json`, and `version` and `buwiz.version` in `package/plugin.json`: any change to the
+   manifest or a screen needs a new version and new signatures. `bun test` checks they agree.
 2. `tools/check-all.sh`.
-3. `tools/release/prepare.sh` compiles the binary and writes it, the unsigned manifest and each screen's source to
-   `dist/release/`, and prints the rest. The Bot's owner approves the plugin id in the Bot's trust store, the
-   publisher signs the manifest with the release key (`gc-2026-01` for `app.buwiz`), and the signed
-   `<plugin id>.manifest.json` ships next to the binary. Sign and notarize the binary as you would any macOS
-   executable.
+3. The Bot's owner approves the plugin id under the release key in the Bot's trust store:
+   `{ "id": "app.buwiz.hello", "publisher_key_id": "gc-2026-01" }`.
+4. The publisher, with `BUWIZ_BROKER_BIN` set to a `buwiz-broker` build from the Bot:
+   ```sh
+   tools/release/publish.sh                          # dry run: dist/release, signed from the Keychain
+   tools/release/publish.sh --publish --prerelease   # the release v<version>, as a GitHub pre-release
+   tools/release/publish.sh --publish                # the release v<version>, the one the Bot installs
+   ```
+   It compiles the binary, signs the manifest (`buwiz-broker sign-manifest`), fills `package/plugin.json`'s
+   `buwiz.files` and `buwiz.binaries` with the SDK's `package` command, and signs the block
+   (`buwiz-broker sign-manifest --block buwiz`). Run on another platform, `--publish` adds that platform's binary to
+   the existing release. The Bot installs from a repository's latest release, which skips pre-releases: publish a
+   pre-release first when a switch is coordinated, then mark it the latest.
+
+To check a package without the release key, sign with a throwaway seed and a trust store that maps the release key
+id to it: `tools/release/publish.sh --key-file <seed> --trust <trust.json>` runs the Bot's own checks
+(`buwiz-broker manifest verify` and `manifest package`). Sign and notarize the binary as you would any macOS
+executable.
