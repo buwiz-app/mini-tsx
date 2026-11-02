@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Hello, the mini-tsx template's mini app (app.buwiz.hello): the MCP server the Buwiz Bot spawns",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "mcp": "bun src/main.ts mcp",

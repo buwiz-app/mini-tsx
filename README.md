@@ -28,3 +28,8 @@ tool, `hello_resolve`), and one screen (`apps/home.tsx`).
 
 Want native Rust screens, or Rust throughout? Use [buwiz-app/mini-rs](https://github.com/buwiz-app/mini-rs). Any
 publisher can ship TSX screens; native screens are for first-party (`app.buwiz`) mini apps.
+
+## License
+
+Apache License 2.0 ([LICENSE](LICENSE); `NOTICE` holds the copyright line). A mini app made from this template
+starts under the same license: change `LICENSE`, `NOTICE` and the license field if yours differs.
