@@ -2,7 +2,7 @@
 // conformance runner (tools/bot/conformance.sh); this is the quick one.
 
 import { expect, test } from "bun:test";
-import { PROTOCOL, fingerprint, problems } from "@buwiz/sdk/plugin";
+import { fingerprint, problems } from "@buwiz/sdk/plugin";
 import pkg from "../package.json";
 import { APPS } from "../src/apps";
 import { Hello } from "../src/plugin";
@@ -31,16 +31,9 @@ test("every TSX app is served, and fingerprinted as served", () => {
   }
 });
 
-test("package/plugin.json is this build's: protocol, id, short, version and publisher", async () => {
+test("package/plugin.json's buwiz.server names its mcpServers entry", async () => {
+  // the rest of the block, and plugin.json's version, come from the signed
+  // manifest when the SDK's package command fills it
   const p = await Bun.file(new URL("../package/plugin.json", import.meta.url)).json();
-  const m = plugin.manifest(plugin.releaseKeyId);
-  expect(p.version).toBe(m.version);
-  expect(p.buwiz).toMatchObject({
-    protocol: PROTOCOL,
-    id: m.id,
-    short: m.short,
-    version: m.version,
-    publisher: { id: m.publisher.id, key_id: m.publisher.key_id },
-  });
   expect(Object.keys(p.mcpServers)).toContain(p.buwiz.server);
 });

@@ -203,8 +203,14 @@ async function files(caller: Caller): Promise<Result> {
 }
 ```
 
-Never log a token or put it in an answer. In tests, push one with
-`h.call("buwiz.account.set", { account: "google", label: "default", access_token: "test" }, null)`.
+Never log a token or put it in an answer. In tests, sign in and out as the Bot does, with a synthetic token:
+
+```ts
+const h = await Harness.start(new Hello());
+await h.signIn("google", "<token>"); // the default sign-in
+// h.signInWith({ account: "google", label: "work", access_token: "<token>" }) for another label, scopes or expiry
+await h.signOut("google");
+```
 
 ## 10. Release
 
@@ -212,8 +218,10 @@ A 1.0 release is a **package** on GitHub releases (protocol 1.0 sections 7 and 8
 `buwiz` block, the signed manifest (`<plugin id>.manifest.json`, installed at `bin/` beside the binary, where the
 binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, installed at `bin/hello-mini-app`).
 
-1. Raise `version` in `package.json`, and `version` and `buwiz.version` in `package/plugin.json`: any change to the
-   manifest or a screen needs a new version and new signatures. `bun test` checks they agree.
+1. Raise `version` in `package.json`, the one place it lives: any change to the manifest or a screen needs a new
+   version and new signatures. The manifest takes the version from `package.json`, and the SDK's `package` command
+   fills `package/plugin.json`'s `version` and the `buwiz` block's protocol, id, short, version and publisher from
+   the signed manifest, so the template carries none of them.
 2. `tools/check-all.sh`.
 3. The Bot's owner approves the plugin id under the release key in the Bot's trust store:
    `{ "id": "app.buwiz.hello", "publisher_key_id": "gc-2026-01" }`.
@@ -223,8 +231,9 @@ binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, inst
    tools/release/publish.sh --publish --prerelease   # the release v<version>, as a GitHub pre-release
    tools/release/publish.sh --publish                # the release v<version>, the one the Bot installs
    ```
-   It compiles the binary, signs the manifest (`buwiz-broker sign-manifest`), fills `package/plugin.json`'s
-   `buwiz.files` and `buwiz.binaries` with the SDK's `package` command, and signs the block
+   It compiles the binary, signs the manifest (`buwiz-broker sign-manifest`), fills `package/plugin.json` with the
+   SDK's `package` command (the version and the block's protocol, id, short and publisher from the signed manifest,
+   `buwiz.files` and `buwiz.binaries` each with its sha256), and signs the block
    (`buwiz-broker sign-manifest --block buwiz`). Run on another platform, `--publish` adds that platform's binary to
    the existing release. The Bot installs from a repository's latest release, which skips pre-releases: publish a
    pre-release first when a switch is coordinated, then mark it the latest.

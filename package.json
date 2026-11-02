@@ -13,7 +13,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@buwiz/sdk": "github:buwiz-app/buwiz-sdk#fff55d395d1c5c524833ec1073c43d34ac542070"
+    "@buwiz/sdk": "github:buwiz-app/buwiz-sdk#79883a820597c623c9259cc0fac0c4166bdde093"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",

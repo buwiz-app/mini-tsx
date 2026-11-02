@@ -21,8 +21,9 @@ Skills, by task: `add-tool`, `add-command` (commands and scopes), `add-screen`, 
    issue (P1); a ticket's title never reveals its subject.
 5. **Text without secrets.** No subject data and never a key in a message, title or log (P4, P9). Side effects sit
    behind explicit arguments, so a call with `{}` changes nothing (P5).
-6. **One version, one signature.** Any change to the manifest or a screen raises `version` in `package.json`, and
-   `package/plugin.json`'s `version` and `buwiz.version` with it (`tests/manifest.test.ts` checks they agree).
+6. **One version, one signature.** Any change to the manifest or a screen raises `version` in `package.json`, the
+   one place it lives: the manifest takes it from there, and the SDK's `package` fills `package/plugin.json`'s
+   version and `buwiz` block from the signed manifest.
    Tests sign with a throwaway test key id (`hello-test-01`); only the owner signs a release with the release key,
    from the Keychain. Agents never touch the Keychain: `tools/release/publish.sh` runs for them only with
    `--key-file` and a throwaway key, and never with `--publish`.
