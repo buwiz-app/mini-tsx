@@ -24,7 +24,7 @@ Skills, by task: `add-tool`, `add-command` (commands and scopes), `add-screen`, 
 6. **One version, one signature.** Any change to the manifest or a screen raises `version` in `package.json`, the
    one place it lives: the manifest takes it from there, and the SDK's `package` fills `package/plugin.json`'s
    version and `buwiz` block from the signed manifest.
-   Tests sign with a throwaway test key id (`hello-test-01`); only the owner signs a release with the release key,
+   Tests sign with a throwaway test key id (`hello-test-01`); only Buwiz signs a release with the release key,
    from the Keychain. Agents never touch the Keychain: `tools/release/publish.sh` runs for them only with
    `--key-file` and a throwaway key, and never with `--publish`.
 7. **One protocol version: 1.0.** No shims for older protocol names or versions (2.0 and 2.1 were the pre-release

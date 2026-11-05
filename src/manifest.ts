@@ -17,7 +17,7 @@ export const ID = "app.buwiz.hello";
 export const SHORT = "hello";
 /** The name the user sees. */
 export const TITLE = "Hello";
-/** The publisher key a release is signed with. Only the owner signs. */
+/** The publisher key a release is signed with. Only Buwiz signs. */
 export const RELEASE_KEY_ID = "gc-2026-01";
 
 /** The manifest without its signature, under publisher key id `keyId`. */
