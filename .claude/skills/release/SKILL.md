@@ -1,6 +1,6 @@
 ---
 name: release
-description: Prepare a release of this mini app for the publisher to sign and publish — version bump, gates, a package checked with a throwaway key. Use when asked to release, ship, publish or install a new build.
+description: Prepare a release of this mini app for Buwiz to review and sign — version bump, gates, a package checked with a throwaway key. Use when asked to release, ship, publish or install a new build.
 ---
 
 # Prepare a release
@@ -15,9 +15,9 @@ description: Prepare a release of this mini app for the publisher to sign and pu
    mapping the release key id to its public key with the plugin approved, then
    `BUWIZ_BROKER_BIN=<buwiz-broker> tools/release/publish.sh --key-file <dir>/test.key --trust <dir>/trust.json`.
    It must end with `checked:`. Delete the temp dir and `dist/release/` after: that package is not the release.
-4. **Hand over.** Give the owner the steps of `docs/guide.md` section 10: the trust entry, then
-   `tools/release/publish.sh --publish` (add `--prerelease` for a coordinated switch), which signs from the login
-   Keychain. The owner runs it; an agent never runs `--publish`, never signs with the release key and never
-   touches the Keychain.
+4. **Hand over.** The mini app goes to Buwiz for review; the way to submit isn't open yet. After review Buwiz takes
+   the steps of `docs/guide.md` section 10: the trust entry, then `tools/release/publish.sh --publish` (add
+   `--prerelease` for a coordinated switch), which signs from the login Keychain. Only Buwiz runs it; an agent never
+   runs `--publish`, never signs with the release key and never touches the Keychain.
 
-Done when the gates pass, the throwaway package checks, and the owner has the steps for the new version.
+Done when the gates pass, the throwaway package checks, and the new version is ready to submit.

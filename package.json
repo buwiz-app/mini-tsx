@@ -1,6 +1,6 @@
 {
   "name": "hello-mini-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Hello, the mini-tsx template's mini app (app.buwiz.hello): the MCP server the Buwiz Bot spawns",
   "license": "Apache-2.0",

@@ -11,7 +11,7 @@
 #                                  block signed
 # Both are signed with the publisher key from the login Keychain
 # (`buwiz-broker sign-manifest`, then `sign-manifest --block buwiz`): macOS
-# asks twice. Only the owner runs it so; an agent uses --key-file.
+# asks twice. Only Buwiz runs it so; an agent uses --key-file.
 #
 # With --publish it then creates the release v<version> on GitHub (gh), or,
 # when it exists (another platform's run), adds this platform's binary to

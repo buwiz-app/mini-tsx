@@ -13,6 +13,9 @@ reserved `buwiz.*` tools, session certificates, tickets, pushed account tokens, 
 is a package: one compiled binary (`bun build --compile`, so users need no runtime), its signed manifest and a
 signed `plugin.json`.
 
+You can build and test a mini app freely. Before it installs in the Bot, Buwiz reviews it and signs it, so you need no
+signing key of your own (section 10).
+
 ## 1. Make it yours
 
 Click **Use this template** on GitHub (or clone it), then name your app:
@@ -214,6 +217,9 @@ await h.signOut("google");
 
 ## 10. Release
 
+Only Buwiz signs a release, and the Bot installs only mini apps Buwiz has signed. You build and check your mini app,
+then submit it to Buwiz, which reviews it and signs it. The way to submit isn't open yet.
+
 A 1.0 release is a **package** on GitHub releases (protocol 1.0 sections 7 and 8): `plugin.json` with a signed
 `buwiz` block, the signed manifest (`<plugin id>.manifest.json`, installed at `bin/` beside the binary, where the
 binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, installed at `bin/hello-mini-app`).
@@ -223,9 +229,10 @@ binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, inst
    fills `package/plugin.json`'s `version` and the `buwiz` block's protocol, id, short, version and publisher from
    the signed manifest, so the template carries none of them.
 2. `tools/check-all.sh`.
-3. The Bot's owner approves the plugin id under the release key in the Bot's trust store:
+3. Submit the mini app to Buwiz for review. The way to submit isn't open yet.
+4. After review, Buwiz approves the plugin id under the release key in the Bot's trust store:
    `{ "id": "app.buwiz.hello", "publisher_key_id": "gc-2026-01" }`.
-4. The publisher, with `BUWIZ_BROKER_BIN` set to a `buwiz-broker` build from the Bot:
+5. Buwiz signs the release, with `BUWIZ_BROKER_BIN` set to a `buwiz-broker` build from the Bot:
    ```sh
    tools/release/publish.sh                          # dry run: dist/release, signed from the Keychain
    tools/release/publish.sh --publish --prerelease   # the release v<version>, as a GitHub pre-release
@@ -240,5 +247,5 @@ binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, inst
 
 To check a package without the release key, sign with a throwaway seed and a trust store that maps the release key
 id to it: `tools/release/publish.sh --key-file <seed> --trust <trust.json>` runs the Bot's own checks
-(`buwiz-broker manifest verify` and `manifest package`). Sign and notarize the binary as you would any macOS
+(`buwiz-broker manifest verify` and `manifest package`). A package signed this way is only a check: the Bot installs what Buwiz has signed. Sign and notarize the binary as you would any macOS
 executable.
