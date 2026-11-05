@@ -29,7 +29,7 @@ tool, `hello_resolve`), and one screen (`apps/home.tsx`).
 Want native Rust screens, or Rust throughout? Use [buwiz-app/mini-rs](https://github.com/buwiz-app/mini-rs). Native
 screens are for first-party (`app.buwiz`) mini apps; every other mini app uses TSX screens.
 
-Anyone can build a mini app, but the Bot installs only mini apps Buwiz has signed: you submit yours, and Buwiz
+Anyone can build a mini app, but the Bot installs only mini apps Buwiz has signed: once submission opens, you send yours to Buwiz, which
 reviews it and signs it. The way to submit isn't open yet ([docs/guide.md](docs/guide.md) section 10).
 
 ## License
