@@ -28,6 +28,13 @@
 #                      this trust store
 # Env:
 #   BUWIZ_BROKER_BIN   a buwiz-broker build (the Bot's broker)
+#   KEY_ID             the publisher key id to sign under (default: the
+#                      manifest's release key id). A new plugin's release key
+#                      id is "unassigned" until Buwiz assigns one at
+#                      submission: Buwiz releases it with KEY_ID=<that id>.
+#                      Another id, such as a test key's, goes into the
+#                      manifest (and from it plugin.json) for a local check,
+#                      never with --publish.
 #   GH_REPO            owner/repo to publish to (default: gh's repo here)
 set -euo pipefail
 
@@ -69,7 +76,13 @@ BIN="$OUT/$BIN_ASSET"
 
 # the unsigned manifest, under the release key id, and each TSX app's source
 "$BIN" manifest >"$OUT/manifest.json"
-read -r PLUGIN_ID VERSION KEY_ID < <(node -e 'const m = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")); console.log(m.id, m.version, m.publisher.key_id)' "$OUT/manifest.json")
+read -r PLUGIN_ID VERSION RELEASE_KEY_ID < <(node -e 'const m = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")); console.log(m.id, m.version, m.publisher.key_id)' "$OUT/manifest.json")
+KEY_ID="${KEY_ID:-$RELEASE_KEY_ID}"
+[ "$KEY_ID" != unassigned ] || die "this plugin has no release key id yet: Buwiz assigns it at submission; set KEY_ID=<key id>"
+if [ "$KEY_ID" != "$RELEASE_KEY_ID" ]; then
+  [ "$PUBLISH" = 0 ] || [ "$RELEASE_KEY_ID" = unassigned ] || die "--publish signs under the release key id $RELEASE_KEY_ID only"
+  "$BIN" manifest --key-id "$KEY_ID" >"$OUT/manifest.json"
+fi
 MANIFEST="$PLUGIN_ID.manifest.json"
 TAG="v$VERSION"
 APP_ARGS=()

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # tools/check-all.sh — every gate: oxlint, oxfmt, tsc, detached setters, tests,
+# tools/new.sh on a temp copy,
 # then the SDK's conformance runner (tools/conformance.sh, which needs
 # BUWIZ_SDK_DIR).
 # SKIP_CONFORMANCE=1 skips conformance, and the run then says it did not pass.
@@ -16,6 +17,8 @@ step "no detached setters (apps/*.tsx)"
 tools/no-detached-setters.sh
 step "bun test"
 bun test
+step "tools/new.sh (a temp copy, offline)"
+tools/test-new.sh
 
 step "SDK doc links follow the pin"
 PIN="$(sed -n 's/.*buwiz-sdk#\([0-9a-f]\{40\}\).*/\1/p' package.json)"

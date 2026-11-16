@@ -6,7 +6,7 @@ from [buwiz-sdk](https://github.com/buwiz-app/buwiz-sdk), so the template holds 
 
 ```sh
 bun install
-tools/new.sh notes "Notes"     # name it: app.buwiz.notes, notes_* tools, /notes
+tools/new.sh notes --id com.example.notes --publisher com.example "Example"   # notes_* tools, /notes
 bun test                       # your tests, through the SDK's harness
 tools/check-all.sh             # every gate, the SDK's conformance runner included (needs BUWIZ_SDK_DIR)
 bun run build                  # dist/notes-mini-app, the binary the Bot spawns
@@ -27,7 +27,7 @@ tool, `hello_resolve`), and one screen (`apps/home.tsx`).
 | `.claude/skills/` | Skills for coding agents: add a tool, a command or scope, a screen; release                             |
 
 Want native Rust screens, or Rust throughout? Use [buwiz-app/mini-rs](https://github.com/buwiz-app/mini-rs). Native
-screens are for first-party (`app.buwiz`) mini apps; every other mini app uses TSX screens.
+screens are for Buwiz's own mini apps; every other mini app uses TSX screens.
 
 Anyone can build a mini app, but the Bot installs only mini apps Buwiz has signed: once submission opens, you send yours to Buwiz, which
 reviews it and signs it. The way to submit isn't open yet ([docs/guide.md](docs/guide.md) section 10).

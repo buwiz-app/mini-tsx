@@ -22,12 +22,14 @@ Click **Use this template** on GitHub (or clone it), then name your app:
 
 ```sh
 bun install
-tools/new.sh notes "Notes"            # plugin id app.buwiz.notes
-tools/new.sh notes "Notes" com.example.notes
+tools/new.sh notes --id com.example.notes --publisher com.example "Example"
 ```
 
-It renames the package, the plugin id, every `hello_*` tool and the `/hello` command, writes a short README, then
-installs and tests. The rest of this guide calls the app Hello.
+The plugin id names your mini app and the publisher id names you; both are reverse DNS under a domain you own, and
+you pick them. The publisher name ("Example") is what users see next to your app. `new.sh` has no default for
+either, and refuses Buwiz's own namespace. It renames the package, the plugin id, every `hello_*` tool and the
+`/hello` command, writes a short README, then installs and tests. A new plugin's source holds no release key id:
+Buwiz assigns it at submission (section 10). The rest of this guide calls the app Hello.
 
 ## 2. What is where
 
@@ -234,8 +236,9 @@ binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, inst
 2. `tools/check-all.sh`.
 3. Submit the mini app to Buwiz for review. The way to submit isn't open yet.
 4. After review, Buwiz approves the plugin id under the release key in the Bot's trust store:
-   `{ "id": "app.buwiz.hello", "publisher_key_id": "gc-2026-01" }`.
-5. Buwiz signs the release, with `BUWIZ_BROKER_BIN` set to a `buwiz-broker` build from the Bot:
+   `{ "id": "<plugin id>", "publisher_key_id": "<release key id>" }`.
+5. Buwiz signs the release, with `BUWIZ_BROKER_BIN` set to a `buwiz-broker` build from the Bot, and `KEY_ID` set to
+   the release key id it assigned (a new plugin's source says `unassigned`):
    ```sh
    tools/release/publish.sh                          # dry run: dist/release, signed from the Keychain
    tools/release/publish.sh --publish --prerelease   # the release v<version>, as a GitHub pre-release
@@ -248,7 +251,7 @@ binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, inst
    the existing release. The Bot installs from a repository's latest release, which skips pre-releases: publish a
    pre-release first when a switch is coordinated, then mark it the latest.
 
-To check a package without the release key, sign with a throwaway seed and a trust store that maps the release key
-id to it: `tools/release/publish.sh --key-file <seed> --trust <trust.json>` runs the Bot's own checks
+To check a package without the release key, sign with a throwaway seed and a trust store that maps a test key id
+to it: `KEY_ID=hello-test-01 tools/release/publish.sh --key-file <seed> --trust <trust.json>` runs the Bot's own checks
 (`buwiz-broker manifest verify` and `manifest package`). A package signed this way is only a check: the Bot installs what Buwiz has signed. Sign and notarize the binary as you would any macOS
 executable.

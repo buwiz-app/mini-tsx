@@ -14,8 +14,8 @@ Needs `BUWIZ_SDK_DIR` set to a buwiz-sdk checkout at the revision this repo pins
    names as known.
 3. **Check the package** without the release key: in a fresh 0700 temp dir outside the repo, make a throwaway seed
    (`node $BUWIZ_SDK_DIR/packages/conformance/bin/buwiz-plugin-test.mjs --keygen <dir>/test.key`) and a trust store
-   mapping the release key id to its public key with the plugin approved, then
-   `BUWIZ_BROKER_BIN=<buwiz-broker> tools/release/publish.sh --key-file <dir>/test.key --trust <dir>/trust.json`.
+   mapping a test key id (`<short>-test-01`) to its public key with the plugin approved, then
+   `KEY_ID=<short>-test-01 BUWIZ_BROKER_BIN=<buwiz-broker> tools/release/publish.sh --key-file <dir>/test.key --trust <dir>/trust.json`.
    It must end with `checked:`. Delete the temp dir and `dist/release/` after: that package is not the release.
 4. **Hand over.** The mini app goes to Buwiz for review; the way to submit isn't open yet. After review Buwiz takes
    the steps of `docs/guide.md` section 10: the trust entry, then `tools/release/publish.sh --publish` (add
