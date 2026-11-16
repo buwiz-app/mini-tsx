@@ -118,8 +118,8 @@ Then register it:
    plus `open`, `attach`, `pick_file`, `storage`, `copy` or `preview` if it uses them.
 
 `@buwiz/sdk/app` types the `buwiz` bridge; `nsh` is untyped until nsh's own types ship in the SDK. The Bot's
-[bridge reference](https://github.com/buwiz-bot/buwiz-bot/blob/main/server/sdk/mini-app/docs/bridge.md) has every
-method, its permission, its errors and its limits; [performance.md](https://github.com/buwiz-bot/buwiz-bot/blob/main/server/sdk/mini-app/docs/performance.md)
+[bridge reference](https://github.com/buwiz-app/buwiz-sdk/blob/main/docs/bridge.md) has every
+method, its permission, its errors and its limits; [performance.md](https://github.com/buwiz-app/buwiz-sdk/blob/main/docs/performance.md)
 has how to keep cards fast.
 
 ## 6. Add a routine
@@ -148,13 +148,13 @@ await h.routine("tidy", "hello_tidy"); // in a routine's turn
 
 Each resolves to the result's `structuredContent`, or rejects with a `ToolError` (`code`, `message`).
 
-**Conformance** runs the Bot's own checker against your compiled binary: the manifest's grammar and limits, the
+**Conformance** runs the SDK's checker against your compiled binary: the manifest's grammar and limits, the
 signature, each screen's source (it compiles, imports only what it may, reaches no network), the reserved tools,
-sessions, signed calls and resolves. It needs a checkout of the Bot:
+sessions, signed calls and resolves. It needs a checkout of the SDK, with its dependencies installed:
 
 ```sh
-git clone https://github.com/buwiz-bot/buwiz-bot && (cd buwiz-bot/server && npm ci)
-BUWIZ_BOT_DIR=$PWD/buwiz-bot tools/bot/conformance.sh
+git clone https://github.com/buwiz-app/buwiz-sdk && (cd buwiz-sdk && bun install)
+BUWIZ_SDK_DIR=$PWD/buwiz-sdk tools/conformance.sh
 ```
 
 It signs with a throwaway key under a test key id, never the release key.
@@ -179,8 +179,8 @@ Yours:
 - **Text without secrets.** A message, title or log carries no subject data and never the key (P4, P9). A tool
   that throws answers `internal`; its error reaches stderr only under `BUWIZ_PLUGIN_DEBUG=1`.
 
-The full rules: the Bot's [security checklist](https://github.com/buwiz-bot/buwiz-bot/blob/main/server/sdk/mini-app/docs/security.md)
-and [manifest reference](https://github.com/buwiz-bot/buwiz-bot/blob/main/server/sdk/mini-app/docs/manifest.md).
+The full rules: the SDK's [security checklist](https://github.com/buwiz-app/buwiz-sdk/blob/main/docs/security.md)
+and [manifest reference](https://github.com/buwiz-app/buwiz-sdk/blob/main/docs/manifest.md).
 
 ## 9. Accounts
 

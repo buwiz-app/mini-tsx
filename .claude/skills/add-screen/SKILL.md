@@ -8,8 +8,8 @@ description: Add or change a screen of this mini app (an app in the manifest) â€
 1. **Write it** as `apps/<id>.tsx`: a default-exported component that imports only `nsh`, `nsh/base` and
    `buwiz`, reads `buwiz.props`, gets data only through `buwiz.call?.(<tool>, â€¦)`, sizes itself from
    `buwiz.viewport()` (an inline card reports its height with `buwiz.fit`), and gives every color a `dark:`
-   variant. No `fetch`, no `localStorage`, no other import. `docs/guide.md` section 5 has the pattern; the Bot's
-   bridge reference has every method.
+   variant. No `fetch`, no `localStorage`, no other import. `docs/guide.md` section 5 has the pattern; the SDK's
+   `docs/bridge.md` has every method.
 2. **Embed it**: import it as text in `src/apps.ts` and add it to `APPS`.
 3. **Declare it** in `src/manifest.ts` `apps`: `id`, `title`, `description`, `...tsx("<id>", APPS.<id>)`, a
    `props` schema (tickets as strings of at most 30 characters), `placement`, `inline` when inline, and

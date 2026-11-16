@@ -27,7 +27,7 @@
 #                      manifest verify` and `manifest package`) against
 #                      this trust store
 # Env:
-#   BUWIZ_BROKER_BIN   buwiz-broker from a buwiz-bot checkout (broker/)
+#   BUWIZ_BROKER_BIN   a buwiz-broker build (the Bot's broker)
 #   GH_REPO            owner/repo to publish to (default: gh's repo here)
 set -euo pipefail
 
@@ -52,7 +52,7 @@ done
 [ "$PUBLISH" = 1 ] && [ -n "$KEY_FILE" ] && die "--publish signs with the Keychain key only"
 [ "$PUBLISH" = 1 ] || [ ${#PRERELEASE[@]} = 0 ] || die "--prerelease goes with --publish"
 BROKER="${BUWIZ_BROKER_BIN:-}"
-[ -n "$BROKER" ] && [ -x "$BROKER" ] || die "set BUWIZ_BROKER_BIN to a buwiz-broker build (buwiz-bot's broker/)"
+[ -n "$BROKER" ] && [ -x "$BROKER" ] || die "set BUWIZ_BROKER_BIN to a buwiz-broker build (the Bot's broker)"
 
 case "$(uname -s)" in Darwin) OS=macos ;; Linux) OS=linux ;; *) die "unsupported OS $(uname -s)" ;; esac
 case "$(uname -m)" in arm64 | aarch64) ARCH=aarch64 ;; x86_64) ARCH=x86_64 ;; *) die "unsupported arch $(uname -m)" ;; esac

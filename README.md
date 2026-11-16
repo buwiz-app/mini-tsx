@@ -8,7 +8,7 @@ from [buwiz-sdk](https://github.com/buwiz-app/buwiz-sdk), so the template holds 
 bun install
 tools/new.sh notes "Notes"     # name it: app.buwiz.notes, notes_* tools, /notes
 bun test                       # your tests, through the SDK's harness
-tools/check-all.sh             # every gate, the Bot's conformance runner included
+tools/check-all.sh             # every gate, the SDK's conformance runner included (needs BUWIZ_SDK_DIR)
 bun run build                  # dist/notes-mini-app, the binary the Bot spawns
 tools/release/publish.sh       # run by Buwiz after review: the release package (docs/guide.md section 10)
 ```
@@ -22,7 +22,7 @@ tool, `hello_resolve`), and one screen (`apps/home.tsx`).
 | `apps/`           | The screens, one `.tsx` file each                                                                       |
 | `package/`        | `plugin.json`, the package template a release fills and signs                                           |
 | `tests/`          | Tests                                                                                                   |
-| `tools/`          | `new.sh`, `check-all.sh`, `no-detached-setters.sh`, `bot/conformance.sh`, `release/publish.sh`          |
+| `tools/`          | `new.sh`, `check-all.sh`, `no-detached-setters.sh`, `conformance.sh`, `release/publish.sh`              |
 | `docs/guide.md`   | The walkthrough: tools, commands and scopes, screens, routines, tests, release                          |
 | `.claude/skills/` | Skills for coding agents: add a tool, a command or scope, a screen; release                             |
 
