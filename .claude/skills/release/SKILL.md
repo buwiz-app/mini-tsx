@@ -5,13 +5,15 @@ description: Prepare a release of this mini app for Buwiz to review and sign —
 
 # Prepare a release
 
+Needs `BUWIZ_SDK_DIR` set to a buwiz-sdk checkout at the revision this repo pins, with `bun install` run there.
+
 1. **Raise the version**, semver, in `package.json`, the one place it lives: the manifest takes it from there, and
    the SDK's `package` fills `package/plugin.json`'s version from the signed manifest. Any change to the manifest or
    a screen since the last release needs it.
 2. **Pass every gate:** `tools/check-all.sh`, conformance included, with no row failing beyond what `AGENTS.md`
    names as known.
 3. **Check the package** without the release key: in a fresh 0700 temp dir outside the repo, make a throwaway seed
-   (`node <buwiz-bot>/server/sdk/mini-app/bin/buwiz-plugin-test.mjs --keygen <dir>/test.key`) and a trust store
+   (`node $BUWIZ_SDK_DIR/packages/conformance/bin/buwiz-plugin-test.mjs --keygen <dir>/test.key`) and a trust store
    mapping the release key id to its public key with the plugin approved, then
    `BUWIZ_BROKER_BIN=<buwiz-broker> tools/release/publish.sh --key-file <dir>/test.key --trust <dir>/trust.json`.
    It must end with `checked:`. Delete the temp dir and `dist/release/` after: that package is not the release.

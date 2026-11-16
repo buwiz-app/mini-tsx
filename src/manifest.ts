@@ -2,9 +2,8 @@
 // release bumps one number, and each TSX app's fingerprint is the hash of
 // the source this build serves.
 //
-// The field rules and limits are the Bot's
-// (server/sdk/mini-app/docs/manifest.md); tools/bot/conformance.sh checks
-// them all.
+// The field rules and limits are in the SDK's docs/manifest.md;
+// tools/conformance.sh checks them all.
 
 import { type Manifest, PROTOCOL, tsx } from "@buwiz/sdk/plugin";
 import pkg from "../package.json";

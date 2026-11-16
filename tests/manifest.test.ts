@@ -1,5 +1,5 @@
-// The manifest against the tools Hello lists. The full check is the Bot's
-// conformance runner (tools/bot/conformance.sh); this is the quick one.
+// The manifest against the tools Hello lists. The full check is the SDK's
+// conformance runner (tools/conformance.sh); this is the quick one.
 
 import { expect, test } from "bun:test";
 import { fingerprint, problems } from "@buwiz/sdk/plugin";
