@@ -28,6 +28,17 @@
 #                      this trust store
 # Env:
 #   BUWIZ_BROKER_BIN   a buwiz-broker build (the Bot's broker)
+#   KEY_ID             the publisher key id to sign under (default: the
+#                      manifest's release key id). A new plugin's release key
+#                      id is "unassigned" until Buwiz assigns one at
+#                      submission: Buwiz releases it with KEY_ID=<that id>.
+#                      --publish refuses the key id "unassigned", the plugin's
+#                      test key id (<short>-test-01) and any id that matches
+#                      *-test-NN, before it looks for the broker or builds;
+#                      and, once a release key id is assigned, any id but that
+#                      one. Without --publish another id, such as a test
+#                      key's, goes into the manifest (and from it plugin.json)
+#                      for a local check.
 #   GH_REPO            owner/repo to publish to (default: gh's repo here)
 set -euo pipefail
 
@@ -51,6 +62,21 @@ while [ $# -gt 0 ]; do
 done
 [ "$PUBLISH" = 1 ] && [ -n "$KEY_FILE" ] && die "--publish signs with the Keychain key only"
 [ "$PUBLISH" = 1 ] || [ ${#PRERELEASE[@]} = 0 ] || die "--prerelease goes with --publish"
+
+# the key rules, from the source, before anything is built or looked for
+SRC=src/manifest.ts
+SRC_SHORT="$(sed -n 's/^export const SHORT = "\(.*\)";$/\1/p' "$REPO/$SRC")"
+SRC_RELEASE_KEY_ID="$(sed -n 's/^export const RELEASE_KEY_ID = "\(.*\)";$/\1/p' "$REPO/$SRC")"
+[ -n "$SRC_SHORT" ] && [ -n "$SRC_RELEASE_KEY_ID" ] || die "cannot read SHORT and RELEASE_KEY_ID from $SRC"
+KEY_ID="${KEY_ID:-$SRC_RELEASE_KEY_ID}"
+[ "$KEY_ID" != unassigned ] || die "this plugin has no release key id yet: Buwiz assigns it at submission; set KEY_ID=<key id>"
+if [ "$PUBLISH" = 1 ]; then
+  case "$KEY_ID" in
+    "$SRC_SHORT-test-01" | *-test-[0-9]*) die "--publish never signs under a test key id ($KEY_ID); set KEY_ID to the release key id" ;;
+  esac
+  [ "$SRC_RELEASE_KEY_ID" = unassigned ] || [ "$KEY_ID" = "$SRC_RELEASE_KEY_ID" ] ||
+    die "--publish signs under the release key id $SRC_RELEASE_KEY_ID only"
+fi
 BROKER="${BUWIZ_BROKER_BIN:-}"
 [ -n "$BROKER" ] && [ -x "$BROKER" ] || die "set BUWIZ_BROKER_BIN to a buwiz-broker build (the Bot's broker)"
 
@@ -69,7 +95,11 @@ BIN="$OUT/$BIN_ASSET"
 
 # the unsigned manifest, under the release key id, and each TSX app's source
 "$BIN" manifest >"$OUT/manifest.json"
-read -r PLUGIN_ID VERSION KEY_ID < <(node -e 'const m = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")); console.log(m.id, m.version, m.publisher.key_id)' "$OUT/manifest.json")
+read -r PLUGIN_ID VERSION RELEASE_KEY_ID < <(node -e 'const m = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")); console.log(m.id, m.version, m.publisher.key_id)' "$OUT/manifest.json")
+[ "$RELEASE_KEY_ID" = "$SRC_RELEASE_KEY_ID" ] || die "the built manifest's release key id $RELEASE_KEY_ID is not $SRC's $SRC_RELEASE_KEY_ID"
+if [ "$KEY_ID" != "$RELEASE_KEY_ID" ]; then
+  "$BIN" manifest --key-id "$KEY_ID" >"$OUT/manifest.json"
+fi
 MANIFEST="$PLUGIN_ID.manifest.json"
 TAG="v$VERSION"
 APP_ARGS=()

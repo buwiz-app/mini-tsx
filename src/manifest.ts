@@ -10,12 +10,15 @@ import pkg from "../package.json";
 import { APPS } from "./apps";
 import { GREET, RESOLVE } from "./tools";
 
-/** The plugin id. Buwiz's own mini apps are app.buwiz.<name>. */
+/** The plugin id: reverse DNS under a domain the publisher owns. */
 export const ID = "app.buwiz.hello";
 /** Every tool starts with hello_. */
 export const SHORT = "hello";
 /** The name the user sees. */
 export const TITLE = "Hello";
+/** The publisher id and the name users see. */
+export const PUBLISHER_ID = "app.buwiz";
+export const PUBLISHER_NAME = "Buwiz";
 /** The publisher key a release is signed with. Only Buwiz signs. */
 export const RELEASE_KEY_ID = "gc-2026-01";
 
@@ -28,7 +31,7 @@ export function unsigned(keyId: string): Manifest {
     version: pkg.version,
     title: TITLE,
     description: "The mini-tsx template: one tool, one command, one scope and one TSX screen.",
-    publisher: { id: "app.buwiz", key_id: keyId, name: "Buwiz" },
+    publisher: { id: PUBLISHER_ID, key_id: keyId, name: PUBLISHER_NAME },
     commands: [{ name: SHORT, args: "[name]", description: `Open ${TITLE}, optionally for a friend`, resolve: RESOLVE }],
     scopes: [{ name: "friend", description: "Friend by name", resolve: RESOLVE, attach: true }],
     apps: [

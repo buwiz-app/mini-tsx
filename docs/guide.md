@@ -4,7 +4,7 @@ A mini app is a plugin for the Buwiz Bot: a small binary the Bot spawns, speakin
 brings **tools** (the model, screens and routines call them), **commands** (`/hello`) and **scopes**
 (`@hello:friend:Ada`), **routines** (timed agent runs) and **screens** (full screen, or inline cards in the chat).
 A signed **manifest** declares all of it, and the Bot trusts nothing the manifest does not declare. The rules are
-[Buwiz Mini App Protocol 1.0](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/protocol-1.0.md); a 1.0 Bot
+[Buwiz Mini App Protocol 1.0](https://github.com/buwiz-app/buwiz-sdk/blob/e1de9c4487de6a9b6509e53ed1e990d699cad454/docs/protocol-1.0.md); a 1.0 Bot
 runs 1.0 plugins only. The manifest's `protocol` is `1.0.0`, protocol 1.0.
 
 You write what is yours: the manifest, the tools, the screens. The SDK
@@ -22,26 +22,32 @@ Click **Use this template** on GitHub (or clone it), then name your app:
 
 ```sh
 bun install
-tools/new.sh notes "Notes"            # plugin id app.buwiz.notes
-tools/new.sh notes "Notes" com.example.notes
+tools/new.sh notes --id com.example.notes --publisher com.example "Example"
 ```
 
-It renames the package, the plugin id, every `hello_*` tool and the `/hello` command, writes a short README, then
-installs and tests. The rest of this guide calls the app Hello.
+The plugin id names your mini app and the publisher id names you; you pick both. The plugin id is 3 to 8
+dot-separated labels (reverse DNS under a domain you own, such as `com.example.notes`); the publisher id is one or
+more dot-separated labels (`example` and `com.example` are both valid). The publisher name ("Example") is what users
+see next to your app, and `--title` and `--description` set the app's name and description (default: the short,
+capitalised, and the title). `new.sh` has no default for the id or the publisher, and refuses Buwiz's own
+namespace and name. It renames the package, the plugin id, every `hello_*` tool and the `/hello` command, writes a
+short README and NOTICE, installs, formats and tests, and last removes itself and `tools/test-new.sh`, which are
+about this repo, not your app. A new plugin's source holds no release key id: Buwiz assigns it at submission
+(section 10). The rest of this guide calls the app Hello.
 
 ## 2. What is where
 
-| Path              | What                                                                                                         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------ |
-| `src/manifest.ts` | The manifest, built in code; its version is `package.json`'s                                                 |
-| `package/`        | `plugin.json`, the package template: the Bot's spawn line, accounts (section 9) and the signed `buwiz` block |
-| `src/tools.ts`    | The tools: `list()` (what the model sees) and `call()` (what runs)                                           |
-| `src/apps.ts`     | The TSX sources, imported as text so the binary embeds them                                                  |
-| `src/plugin.ts`   | `Hello`: the state (tickets, your store) and the `Plugin` that ties it together                              |
-| `src/main.ts`     | One line: the SDK's command line                                                                             |
-| `apps/`           | The screens, one `.tsx` file each                                                                            |
-| `tests/`          | Tests, through the SDK's harness                                                                             |
-| `tools/`          | `check-all.sh` (every gate), `no-detached-setters.sh`, `conformance.sh`, `release/publish.sh`, `new.sh`      |
+| Path              | What                                                                                                                    |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `src/manifest.ts` | The manifest, built in code; its version is `package.json`'s                                                            |
+| `package/`        | `plugin.json`, which a release fills and signs: the Bot's spawn line, accounts (section 9) and the signed `buwiz` block |
+| `src/tools.ts`    | The tools: `list()` (what the model sees) and `call()` (what runs)                                                      |
+| `src/apps.ts`     | The TSX sources, imported as text so the binary embeds them                                                             |
+| `src/plugin.ts`   | `Hello`: the state (tickets, your store) and the `Plugin` that ties it together                                         |
+| `src/main.ts`     | One line: the SDK's command line                                                                                        |
+| `apps/`           | The screens, one `.tsx` file each                                                                                       |
+| `tests/`          | Tests, through the SDK's harness                                                                                        |
+| `tools/`          | `check-all.sh` (every gate), `no-detached-setters.sh`, `conformance.sh`, `release/publish.sh`, `new.sh`                 |
 
 The binary's command line comes from the SDK:
 
@@ -118,8 +124,8 @@ Then register it:
    plus `open`, `attach`, `pick_file`, `storage`, `copy` or `preview` if it uses them.
 
 `@buwiz/sdk/app` types the `buwiz` bridge; `nsh` is untyped until nsh's own types ship in the SDK. The Bot's
-[bridge reference](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/bridge.md) has every
-method, its permission, its errors and its limits; [performance.md](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/performance.md)
+[bridge reference](https://github.com/buwiz-app/buwiz-sdk/blob/e1de9c4487de6a9b6509e53ed1e990d699cad454/docs/bridge.md) has every
+method, its permission, its errors and its limits; [performance.md](https://github.com/buwiz-app/buwiz-sdk/blob/e1de9c4487de6a9b6509e53ed1e990d699cad454/docs/performance.md)
 has how to keep cards fast.
 
 ## 6. Add a routine
@@ -155,7 +161,7 @@ dependencies installed:
 
 ```sh
 git clone https://github.com/buwiz-app/buwiz-sdk
-git -C buwiz-sdk checkout 317bae64f85947c94ce6d2efb7f2d9bdedc387a0
+git -C buwiz-sdk checkout e1de9c4487de6a9b6509e53ed1e990d699cad454
 (cd buwiz-sdk && bun install)
 BUWIZ_SDK_DIR=$PWD/buwiz-sdk tools/conformance.sh
 ```
@@ -182,8 +188,8 @@ Yours:
 - **Text without secrets.** A message, title or log carries no subject data and never the key (P4, P9). A tool
   that throws answers `internal`; its error reaches stderr only under `BUWIZ_PLUGIN_DEBUG=1`.
 
-The full rules: the SDK's [security checklist](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/security.md)
-and [manifest reference](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/manifest.md).
+The full rules: the SDK's [security checklist](https://github.com/buwiz-app/buwiz-sdk/blob/e1de9c4487de6a9b6509e53ed1e990d699cad454/docs/security.md)
+and [manifest reference](https://github.com/buwiz-app/buwiz-sdk/blob/e1de9c4487de6a9b6509e53ed1e990d699cad454/docs/manifest.md).
 
 ## 9. Accounts
 
@@ -230,12 +236,13 @@ binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, inst
 1. Raise `version` in `package.json`, the one place it lives: any change to the manifest or a screen needs a new
    version and new signatures. The manifest takes the version from `package.json`, and the SDK's `package` command
    fills `package/plugin.json`'s `version` and the `buwiz` block's protocol, id, short, version and publisher from
-   the signed manifest, so the template carries none of them.
+   the signed manifest, so this repo carries none of them.
 2. `tools/check-all.sh`.
 3. Submit the mini app to Buwiz for review. The way to submit isn't open yet.
 4. After review, Buwiz approves the plugin id under the release key in the Bot's trust store:
-   `{ "id": "app.buwiz.hello", "publisher_key_id": "gc-2026-01" }`.
-5. Buwiz signs the release, with `BUWIZ_BROKER_BIN` set to a `buwiz-broker` build from the Bot:
+   `{ "id": "<plugin id>", "publisher_key_id": "<release key id>" }`.
+5. Buwiz signs the release, with `BUWIZ_BROKER_BIN` set to a `buwiz-broker` build from the Bot, and `KEY_ID` set to
+   the release key id it assigned (a new plugin's source says `unassigned`):
    ```sh
    tools/release/publish.sh                          # dry run: dist/release, signed from the Keychain
    tools/release/publish.sh --publish --prerelease   # the release v<version>, as a GitHub pre-release
@@ -248,7 +255,7 @@ binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, inst
    the existing release. The Bot installs from a repository's latest release, which skips pre-releases: publish a
    pre-release first when a switch is coordinated, then mark it the latest.
 
-To check a package without the release key, sign with a throwaway seed and a trust store that maps the release key
-id to it: `tools/release/publish.sh --key-file <seed> --trust <trust.json>` runs the Bot's own checks
+To check a package without the release key, sign with a throwaway seed and a trust store that maps a test key id
+to it: `KEY_ID=hello-test-01 tools/release/publish.sh --key-file <seed> --trust <trust.json>` runs the Bot's own checks
 (`buwiz-broker manifest verify` and `manifest package`). A package signed this way is only a check: the Bot installs what Buwiz has signed. Sign and notarize the binary as you would any macOS
 executable.
