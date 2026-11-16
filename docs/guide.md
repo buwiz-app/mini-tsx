@@ -4,7 +4,7 @@ A mini app is a plugin for the Buwiz Bot: a small binary the Bot spawns, speakin
 brings **tools** (the model, screens and routines call them), **commands** (`/hello`) and **scopes**
 (`@hello:friend:Ada`), **routines** (timed agent runs) and **screens** (full screen, or inline cards in the chat).
 A signed **manifest** declares all of it, and the Bot trusts nothing the manifest does not declare. The rules are
-[Buwiz Mini App Protocol 1.0](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/protocol-1.0.md); a 1.0 Bot
+[Buwiz Mini App Protocol 1.0](https://github.com/buwiz-app/buwiz-sdk/blob/e1de9c4487de6a9b6509e53ed1e990d699cad454/docs/protocol-1.0.md); a 1.0 Bot
 runs 1.0 plugins only. The manifest's `protocol` is `1.0.0`, protocol 1.0.
 
 You write what is yours: the manifest, the tools, the screens. The SDK
@@ -120,8 +120,8 @@ Then register it:
    plus `open`, `attach`, `pick_file`, `storage`, `copy` or `preview` if it uses them.
 
 `@buwiz/sdk/app` types the `buwiz` bridge; `nsh` is untyped until nsh's own types ship in the SDK. The Bot's
-[bridge reference](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/bridge.md) has every
-method, its permission, its errors and its limits; [performance.md](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/performance.md)
+[bridge reference](https://github.com/buwiz-app/buwiz-sdk/blob/e1de9c4487de6a9b6509e53ed1e990d699cad454/docs/bridge.md) has every
+method, its permission, its errors and its limits; [performance.md](https://github.com/buwiz-app/buwiz-sdk/blob/e1de9c4487de6a9b6509e53ed1e990d699cad454/docs/performance.md)
 has how to keep cards fast.
 
 ## 6. Add a routine
@@ -157,7 +157,7 @@ dependencies installed:
 
 ```sh
 git clone https://github.com/buwiz-app/buwiz-sdk
-git -C buwiz-sdk checkout 317bae64f85947c94ce6d2efb7f2d9bdedc387a0
+git -C buwiz-sdk checkout e1de9c4487de6a9b6509e53ed1e990d699cad454
 (cd buwiz-sdk && bun install)
 BUWIZ_SDK_DIR=$PWD/buwiz-sdk tools/conformance.sh
 ```
@@ -184,8 +184,8 @@ Yours:
 - **Text without secrets.** A message, title or log carries no subject data and never the key (P4, P9). A tool
   that throws answers `internal`; its error reaches stderr only under `BUWIZ_PLUGIN_DEBUG=1`.
 
-The full rules: the SDK's [security checklist](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/security.md)
-and [manifest reference](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/manifest.md).
+The full rules: the SDK's [security checklist](https://github.com/buwiz-app/buwiz-sdk/blob/e1de9c4487de6a9b6509e53ed1e990d699cad454/docs/security.md)
+and [manifest reference](https://github.com/buwiz-app/buwiz-sdk/blob/e1de9c4487de6a9b6509e53ed1e990d699cad454/docs/manifest.md).
 
 ## 9. Accounts
 

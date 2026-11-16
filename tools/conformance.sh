@@ -34,6 +34,9 @@ die() { echo "conformance: $*" >&2; exit 2; }
 for f in "$RUNNER" "$SIGNER"; do [ -f "$f" ] || die "$f not found: is BUWIZ_SDK_DIR a buwiz-sdk checkout?"; done
 PIN="$(sed -n 's/.*buwiz-sdk#\([0-9a-f]\{40\}\).*/\1/p' "$REPO/package.json")"
 [ -n "$PIN" ] || die "no pinned buwiz-sdk revision found in package.json"
+# the lockfile must resolve the same revision, or the plugin is built against another SDK
+grep -q "buwiz-sdk#$(printf '%s' "$PIN" | cut -c1-7)\"" "$REPO/bun.lock" ||
+  die "bun.lock does not resolve the pinned buwiz-sdk revision $PIN: bun update @buwiz/sdk"
 HEAD_SHA="$(git -C "$SDK" rev-parse HEAD 2>/dev/null)" || die "$SDK is not a git checkout of buwiz-sdk"
 if [ "$HEAD_SHA" != "$PIN" ]; then
   # the same files under another commit id (a merge of the pin) also pass
