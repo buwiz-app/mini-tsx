@@ -4,8 +4,8 @@ A mini app is a plugin for the Buwiz Bot: a small binary the Bot spawns, speakin
 brings **tools** (the model, screens and routines call them), **commands** (`/hello`) and **scopes**
 (`@hello:friend:Ada`), **routines** (timed agent runs) and **screens** (full screen, or inline cards in the chat).
 A signed **manifest** declares all of it, and the Bot trusts nothing the manifest does not declare. The rules are
-[Buwiz Mini App Protocol 1.0](https://github.com/buwiz-app/buwiz-sdk/blob/main/docs/protocol-1.0.md); a 1.0 Bot
-runs 1.0 plugins only.
+[Buwiz Mini App Protocol 1.0](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/protocol-1.0.md); a 1.0 Bot
+runs 1.0 plugins only. The manifest's `protocol` is `1.0.0`, protocol 1.0.
 
 You write what is yours: the manifest, the tools, the screens. The SDK
 ([buwiz-app/buwiz-sdk](https://github.com/buwiz-app/buwiz-sdk), `@buwiz/sdk/plugin`) does the protocol: MCP, the
@@ -41,7 +41,7 @@ installs and tests. The rest of this guide calls the app Hello.
 | `src/main.ts`     | One line: the SDK's command line                                                                             |
 | `apps/`           | The screens, one `.tsx` file each                                                                            |
 | `tests/`          | Tests, through the SDK's harness                                                                             |
-| `tools/`          | `check-all.sh` (every gate), `no-detached-setters.sh`, `bot/conformance.sh`, `release/publish.sh`, `new.sh`  |
+| `tools/`          | `check-all.sh` (every gate), `no-detached-setters.sh`, `conformance.sh`, `release/publish.sh`, `new.sh`      |
 
 The binary's command line comes from the SDK:
 
@@ -118,8 +118,8 @@ Then register it:
    plus `open`, `attach`, `pick_file`, `storage`, `copy` or `preview` if it uses them.
 
 `@buwiz/sdk/app` types the `buwiz` bridge; `nsh` is untyped until nsh's own types ship in the SDK. The Bot's
-[bridge reference](https://github.com/buwiz-app/buwiz-sdk/blob/main/docs/bridge.md) has every
-method, its permission, its errors and its limits; [performance.md](https://github.com/buwiz-app/buwiz-sdk/blob/main/docs/performance.md)
+[bridge reference](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/bridge.md) has every
+method, its permission, its errors and its limits; [performance.md](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/performance.md)
 has how to keep cards fast.
 
 ## 6. Add a routine
@@ -150,10 +150,13 @@ Each resolves to the result's `structuredContent`, or rejects with a `ToolError`
 
 **Conformance** runs the SDK's checker against your compiled binary: the manifest's grammar and limits, the
 signature, each screen's source (it compiles, imports only what it may, reaches no network), the reserved tools,
-sessions, signed calls and resolves. It needs a checkout of the SDK, with its dependencies installed:
+sessions, signed calls and resolves. It needs Node (22.13 or newer) and bun, and a checkout of the SDK at the revision this repo pins, with its
+dependencies installed:
 
 ```sh
-git clone https://github.com/buwiz-app/buwiz-sdk && (cd buwiz-sdk && bun install)
+git clone https://github.com/buwiz-app/buwiz-sdk
+git -C buwiz-sdk checkout 317bae64f85947c94ce6d2efb7f2d9bdedc387a0
+(cd buwiz-sdk && bun install)
 BUWIZ_SDK_DIR=$PWD/buwiz-sdk tools/conformance.sh
 ```
 
@@ -179,8 +182,8 @@ Yours:
 - **Text without secrets.** A message, title or log carries no subject data and never the key (P4, P9). A tool
   that throws answers `internal`; its error reaches stderr only under `BUWIZ_PLUGIN_DEBUG=1`.
 
-The full rules: the SDK's [security checklist](https://github.com/buwiz-app/buwiz-sdk/blob/main/docs/security.md)
-and [manifest reference](https://github.com/buwiz-app/buwiz-sdk/blob/main/docs/manifest.md).
+The full rules: the SDK's [security checklist](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/security.md)
+and [manifest reference](https://github.com/buwiz-app/buwiz-sdk/blob/317bae64f85947c94ce6d2efb7f2d9bdedc387a0/docs/manifest.md).
 
 ## 9. Accounts
 

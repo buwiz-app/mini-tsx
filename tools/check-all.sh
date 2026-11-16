@@ -17,6 +17,11 @@ tools/no-detached-setters.sh
 step "bun test"
 bun test
 
+step "SDK doc links follow the pin"
+PIN="$(sed -n 's/.*buwiz-sdk#\([0-9a-f]\{40\}\).*/\1/p' package.json)"
+STALE="$(grep -rhoE 'buwiz-sdk/blob/[^/)]+|checkout [0-9a-f]{40}' docs README.md | grep -vE "blob/$PIN\$|checkout $PIN\$" || true)"
+[ -z "$STALE" ] || { printf 'SDK links name a revision other than the pinned %s:\n%s\n' "$PIN" "$STALE" >&2; exit 1; }
+
 if [ "${SKIP_CONFORMANCE:-0}" = 1 ]; then
   printf '\nconformance SKIPPED: not every gate ran\n'
   exit 1

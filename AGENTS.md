@@ -27,7 +27,7 @@ Skills, by task: `add-tool`, `add-command` (commands and scopes), `add-screen`, 
    Tests sign with a throwaway test key id (`hello-test-01`); only Buwiz signs a release with the release key,
    from the Keychain. Agents never touch the Keychain: `tools/release/publish.sh` runs for them only with
    `--key-file` and a throwaway key, and never with `--publish`.
-7. **One protocol version: 1.0.** No shims for other protocol names or versions; a 1.0 Bot refuses them.
+7. **One protocol version: 1.0** (the manifest's `protocol` is `1.0.0`). No shims for any other name or version.
 8. **No detached setters.** A screen passes a signal setter wrapped: `onChange={(v) => x.set(v)}`, never
    `onChange={x.set}`; the kit calls `p.onChange(v)`, so a detached `set` loses `this`.
    `tools/no-detached-setters.sh` checks `apps/`.

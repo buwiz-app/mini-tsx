@@ -5,6 +5,8 @@ description: Prepare a release of this mini app for Buwiz to review and sign —
 
 # Prepare a release
 
+Needs `BUWIZ_SDK_DIR` set to a buwiz-sdk checkout at the revision this repo pins, with `bun install` run there.
+
 1. **Raise the version**, semver, in `package.json`, the one place it lives: the manifest takes it from there, and
    the SDK's `package` fills `package/plugin.json`'s version from the signed manifest. Any change to the manifest or
    a screen since the last release needs it.
