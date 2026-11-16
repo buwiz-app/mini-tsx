@@ -32,21 +32,18 @@ SIGNER="$SDK/packages/conformance/src/v1/sign-manifest.mjs"
 die() { echo "conformance: $*" >&2; exit 2; }
 [ -n "$SDK" ] || die "set BUWIZ_SDK_DIR to a buwiz-sdk checkout (git clone https://github.com/buwiz-app/buwiz-sdk; cd buwiz-sdk; bun install)"
 for f in "$RUNNER" "$SIGNER"; do [ -f "$f" ] || die "$f not found: is BUWIZ_SDK_DIR a buwiz-sdk checkout?"; done
-PIN="$(sed -n 's/.*buwiz-sdk#\([0-9a-f]\{40\}\).*/\1/p' "$REPO/package.json")"
-[ -n "$PIN" ] || die "no pinned buwiz-sdk revision found in package.json"
-# the lockfile must resolve the same revision, or the plugin is built against another SDK
-grep -q "buwiz-sdk#$(printf '%s' "$PIN" | cut -c1-7)\"" "$REPO/bun.lock" ||
-  die "bun.lock does not resolve the pinned buwiz-sdk revision $PIN: bun update @buwiz/sdk"
-HEAD_SHA="$(git -C "$SDK" rev-parse HEAD 2>/dev/null)" || die "$SDK is not a git checkout of buwiz-sdk"
-if [ "$HEAD_SHA" != "$PIN" ]; then
-  # the same files under another commit id (a merge of the pin) also pass
-  [ "$(git -C "$SDK" rev-parse "$PIN^{tree}" 2>/dev/null)" = "$(git -C "$SDK" rev-parse 'HEAD^{tree}')" ] ||
-    die "the SDK checkout is not the pinned revision $PIN: git -C \"\$BUWIZ_SDK_DIR\" fetch && git -C \"\$BUWIZ_SDK_DIR\" checkout $PIN"
-fi
-git -C "$SDK" diff --quiet HEAD -- packages/conformance || die "the SDK checkout has uncommitted changes under packages/conformance"
+# the pin, with package.json and bun.lock agreeing on it
+PIN="$("$REPO/tools/sdk-pin.sh")"
+git -C "$SDK" rev-parse --git-dir >/dev/null 2>&1 || die "$SDK is not a git checkout of buwiz-sdk"
+# the same files as the pin (a merge of the pin has another commit id and passes)
+[ "$(git -C "$SDK" rev-parse "$PIN^{tree}" 2>/dev/null)" = "$(git -C "$SDK" rev-parse 'HEAD^{tree}')" ] ||
+  die "the SDK checkout is not the pinned revision $PIN: git -C \"\$BUWIZ_SDK_DIR\" fetch && git -C \"\$BUWIZ_SDK_DIR\" checkout $PIN"
+[ -z "$(git -C "$SDK" status --porcelain --untracked-files=all -- packages/conformance)" ] ||
+  die "the SDK checkout has uncommitted or untracked files under packages/conformance"
 command -v node >/dev/null || die "node is needed to run the SDK's tools"
-(cd "$SDK/packages/conformance" && node --input-type=module -e 'await import("esbuild"); await import("@modelcontextprotocol/sdk/client/index.js"); await import("@modelcontextprotocol/sdk/client/stdio.js")') >/dev/null 2>&1 ||
-  die "the SDK's runner cannot load its dependencies: run bun install in $SDK"
+NODE_MIN="$(node -p 'require(process.argv[1]).engines.node' "$SDK/packages/conformance/package.json" 2>/dev/null || true)"
+(cd "$SDK/packages/conformance" && node --input-type=module -e 'await import("node:sqlite"); await import("esbuild"); await import("@modelcontextprotocol/sdk/client/index.js"); await import("@modelcontextprotocol/sdk/client/stdio.js")') >/dev/null 2>&1 ||
+  die "the SDK's runner cannot start: it needs Node ${NODE_MIN:-(see packages/conformance/package.json engines)} (this is $(node -v)) and its dependencies (run bun install in $SDK)"
 
 # 1. the release binary
 (cd "$REPO" && bun run --silent build >/dev/null)

@@ -1,9 +1,9 @@
 # AGENTS.md
 
-A Buwiz Bot mini app in TypeScript (Buwiz Mini App Protocol 1.0), made from the `buwiz-app/mini-tsx` template. The
+A Buwiz Bot mini app in TypeScript (Buwiz Mini App Protocol 1.0), made from `buwiz-app/mini-tsx`. The
 SDK (`@buwiz/sdk`, from `buwiz-app/buwiz-sdk`, pinned by commit in `package.json`) does the protocol; this repo
 holds the manifest (`src/manifest.ts`), the tools (`src/tools.ts`), the screens (`apps/`, embedded by
-`src/apps.ts`) and the package template (`package/plugin.json`). Bun runs it, `bun build --compile` builds it, and
+`src/apps.ts`) and the package's `plugin.json` (`package/plugin.json`). Bun runs it, `bun build --compile` builds it, and
 `tools/release/publish.sh` releases it as a package. `docs/guide.md` is the reference for every part.
 
 Skills, by task: `add-tool`, `add-command` (commands and scopes), `add-screen`, `release`.

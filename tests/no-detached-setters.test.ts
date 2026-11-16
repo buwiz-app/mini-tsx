@@ -77,7 +77,7 @@ test("fails when a requested path is missing", async () => {
   });
 });
 
-test("the template screens have no detached setters", () => {
+test("the screens have no detached setters", () => {
   const result = runGate();
   expect(result.exitCode).toBe(0);
   expect(result.output).toBe("");

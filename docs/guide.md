@@ -25,25 +25,29 @@ bun install
 tools/new.sh notes --id com.example.notes --publisher com.example "Example"
 ```
 
-The plugin id names your mini app and the publisher id names you; both are reverse DNS under a domain you own, and
-you pick them. The publisher name ("Example") is what users see next to your app. `new.sh` has no default for
-either, and refuses Buwiz's own namespace. It renames the package, the plugin id, every `hello_*` tool and the
-`/hello` command, writes a short README, then installs and tests. A new plugin's source holds no release key id:
-Buwiz assigns it at submission (section 10). The rest of this guide calls the app Hello.
+The plugin id names your mini app and the publisher id names you; you pick both. The plugin id is 3 to 8
+dot-separated labels (reverse DNS under a domain you own, such as `com.example.notes`); the publisher id is one or
+more dot-separated labels (`example` and `com.example` are both valid). The publisher name ("Example") is what users
+see next to your app, and `--title` and `--description` set the app's name and description (default: the short,
+capitalised, and the title). `new.sh` has no default for the id or the publisher, and refuses Buwiz's own
+namespace and name. It renames the package, the plugin id, every `hello_*` tool and the `/hello` command, writes a
+short README and NOTICE, installs, formats and tests, and last removes itself and `tools/test-new.sh`, which are
+about this repo, not your app. A new plugin's source holds no release key id: Buwiz assigns it at submission
+(section 10). The rest of this guide calls the app Hello.
 
 ## 2. What is where
 
-| Path              | What                                                                                                         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------ |
-| `src/manifest.ts` | The manifest, built in code; its version is `package.json`'s                                                 |
-| `package/`        | `plugin.json`, the package template: the Bot's spawn line, accounts (section 9) and the signed `buwiz` block |
-| `src/tools.ts`    | The tools: `list()` (what the model sees) and `call()` (what runs)                                           |
-| `src/apps.ts`     | The TSX sources, imported as text so the binary embeds them                                                  |
-| `src/plugin.ts`   | `Hello`: the state (tickets, your store) and the `Plugin` that ties it together                              |
-| `src/main.ts`     | One line: the SDK's command line                                                                             |
-| `apps/`           | The screens, one `.tsx` file each                                                                            |
-| `tests/`          | Tests, through the SDK's harness                                                                             |
-| `tools/`          | `check-all.sh` (every gate), `no-detached-setters.sh`, `conformance.sh`, `release/publish.sh`, `new.sh`      |
+| Path              | What                                                                                                                    |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `src/manifest.ts` | The manifest, built in code; its version is `package.json`'s                                                            |
+| `package/`        | `plugin.json`, which a release fills and signs: the Bot's spawn line, accounts (section 9) and the signed `buwiz` block |
+| `src/tools.ts`    | The tools: `list()` (what the model sees) and `call()` (what runs)                                                      |
+| `src/apps.ts`     | The TSX sources, imported as text so the binary embeds them                                                             |
+| `src/plugin.ts`   | `Hello`: the state (tickets, your store) and the `Plugin` that ties it together                                         |
+| `src/main.ts`     | One line: the SDK's command line                                                                                        |
+| `apps/`           | The screens, one `.tsx` file each                                                                                       |
+| `tests/`          | Tests, through the SDK's harness                                                                                        |
+| `tools/`          | `check-all.sh` (every gate), `no-detached-setters.sh`, `conformance.sh`, `release/publish.sh`, `new.sh`                 |
 
 The binary's command line comes from the SDK:
 
@@ -232,7 +236,7 @@ binary finds it) and one binary per platform (`hello-mini-app-<os>-<arch>`, inst
 1. Raise `version` in `package.json`, the one place it lives: any change to the manifest or a screen needs a new
    version and new signatures. The manifest takes the version from `package.json`, and the SDK's `package` command
    fills `package/plugin.json`'s `version` and the `buwiz` block's protocol, id, short, version and publisher from
-   the signed manifest, so the template carries none of them.
+   the signed manifest, so this repo carries none of them.
 2. `tools/check-all.sh`.
 3. Submit the mini app to Buwiz for review. The way to submit isn't open yet.
 4. After review, Buwiz approves the plugin id under the release key in the Bot's trust store:
