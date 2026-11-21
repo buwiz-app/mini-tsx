@@ -4,7 +4,7 @@ A mini app is a plugin for the Buwiz Bot: a small binary the Bot spawns, speakin
 brings **tools** (the model, screens and routines call them), **commands** (`/hello`) and **scopes**
 (`@hello:friend:Ada`), **routines** (timed agent runs) and **screens** (full screen, or inline cards in the chat).
 A signed **manifest** declares all of it, and the Bot trusts nothing the manifest does not declare. The rules are
-[Buwiz Mini App Protocol 1.0](https://github.com/buwiz-app/buwiz-sdk/blob/8f95537270815e75d0a23488ca12d175138c6d91/docs/protocol-1.0.md); a 1.0 Bot
+[Buwiz Mini App Protocol 1.0](https://github.com/buwiz-app/buwiz-sdk/blob/f63038d5cdbb05a20d9f329be3a85a8a6f3e8f8d/docs/protocol-1.0.md); a 1.0 Bot
 runs 1.0 plugins only. The manifest's `protocol` is `1.0.0`, protocol 1.0.
 
 You write what is yours: the manifest, the tools, the screens. The SDK
@@ -124,8 +124,8 @@ Then register it:
    plus `open`, `attach`, `pick_file`, `storage`, `copy` or `preview` if it uses them.
 
 `@buwiz/sdk/app` types the `buwiz` bridge; `nsh` is untyped until nsh's own types ship in the SDK. The Bot's
-[bridge reference](https://github.com/buwiz-app/buwiz-sdk/blob/8f95537270815e75d0a23488ca12d175138c6d91/docs/bridge.md) has every
-method, its permission, its errors and its limits; [performance.md](https://github.com/buwiz-app/buwiz-sdk/blob/8f95537270815e75d0a23488ca12d175138c6d91/docs/performance.md)
+[bridge reference](https://github.com/buwiz-app/buwiz-sdk/blob/f63038d5cdbb05a20d9f329be3a85a8a6f3e8f8d/docs/bridge.md) has every
+method, its permission, its errors and its limits; [performance.md](https://github.com/buwiz-app/buwiz-sdk/blob/f63038d5cdbb05a20d9f329be3a85a8a6f3e8f8d/docs/performance.md)
 has how to keep cards fast.
 
 ## 6. Add a routine
@@ -161,7 +161,7 @@ dependencies installed:
 
 ```sh
 git clone https://github.com/buwiz-app/buwiz-sdk
-git -C buwiz-sdk checkout 8f95537270815e75d0a23488ca12d175138c6d91
+git -C buwiz-sdk checkout f63038d5cdbb05a20d9f329be3a85a8a6f3e8f8d
 (cd buwiz-sdk && bun install)
 BUWIZ_SDK_DIR=$PWD/buwiz-sdk tools/conformance.sh
 ```
@@ -178,7 +178,7 @@ Before your tool runs, the SDK has made sure that:
 - a resolve, a routine's query and a caller of an origin the SDK does not know, or no caller at all, only read;
 - a routine's turn only reads, or calls a write the routine declares.
 
-Who may call a tool at all is its audience ([protocol 1.0, 16.4](https://github.com/buwiz-app/buwiz-sdk/blob/8f95537270815e75d0a23488ca12d175138c6d91/docs/protocol-1.0.md)): the model can call any tool unless the
+Who may call a tool at all is its audience ([protocol 1.0, 16.4](https://github.com/buwiz-app/buwiz-sdk/blob/f63038d5cdbb05a20d9f329be3a85a8a6f3e8f8d/docs/protocol-1.0.md)): the model can call any tool unless the
 audience leaves out `"agent"`. A generated widget is offered only a tool whose audience lists `"widget"`; Hello's
 lists none, so no widget reaches it.
 
@@ -193,8 +193,8 @@ Yours:
 - **Text without secrets.** A message, title or log carries no subject data and never the key (P4, P9). A tool
   that throws answers `internal`; its error reaches stderr only under `BUWIZ_PLUGIN_DEBUG=1`.
 
-The full rules: the SDK's [security checklist](https://github.com/buwiz-app/buwiz-sdk/blob/8f95537270815e75d0a23488ca12d175138c6d91/docs/security.md)
-and [manifest reference](https://github.com/buwiz-app/buwiz-sdk/blob/8f95537270815e75d0a23488ca12d175138c6d91/docs/manifest.md).
+The full rules: the SDK's [security checklist](https://github.com/buwiz-app/buwiz-sdk/blob/f63038d5cdbb05a20d9f329be3a85a8a6f3e8f8d/docs/security.md)
+and [manifest reference](https://github.com/buwiz-app/buwiz-sdk/blob/f63038d5cdbb05a20d9f329be3a85a8a6f3e8f8d/docs/manifest.md).
 
 ## 9. Accounts
 

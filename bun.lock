@@ -5,7 +5,7 @@
     "": {
       "name": "hello-mini-app",
       "dependencies": {
-        "@buwiz/sdk": "github:buwiz-app/buwiz-sdk#8f95537270815e75d0a23488ca12d175138c6d91",
+        "@buwiz/sdk": "github:buwiz-app/buwiz-sdk#f63038d5cdbb05a20d9f329be3a85a8a6f3e8f8d",
       },
       "devDependencies": {
         "@types/bun": "^1.4.4",
@@ -16,7 +16,7 @@
     },
   },
   "packages": {
-    "@buwiz/sdk": ["@buwiz/sdk@github:buwiz-app/buwiz-sdk#8f95537", {}, "buwiz-app-buwiz-sdk-8f95537", "sha512-PMLq6F72ZyEC5f3U3TAAkaqCfIT9k4sp6iuNEBJO/m5JoQdCdUx1A6HH+yBsXMm31MZntG7XcvoGn4PrZ0inCQ=="],
+    "@buwiz/sdk": ["@buwiz/sdk@github:buwiz-app/buwiz-sdk#f63038d", {}, "buwiz-app-buwiz-sdk-f63038d", "sha512-gKaf3H825pt6Bm2W6YRkEB/f2rlfpZQZui17Jw/twIIDIBkB8fh+qQ/HHGd5Vy7Sl4pgV0LivExJIb6VFVZtsw=="],
 
     "@oxfmt/binding-android-arm-eabi": ["@oxfmt/binding-android-arm-eabi@0.75.0", "", { "os": "android", "cpu": "arm" }, "sha512-zHJ7LcTN46/5mtoLxsUu14pdF9ixFwDURtmxZ0CeNwqom5qB5NRVqU6o2GRZ7QPdNBW8G6j9UTJzQ+EDevMH0w=="],
 
